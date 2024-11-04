@@ -1,2 +1,3 @@
-aiogram==3.13.1
+aiogram==3.14.0
 python-dotenv==1.0.1
+yandexfreetranslate==1.5
