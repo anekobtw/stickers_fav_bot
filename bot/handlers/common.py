@@ -7,6 +7,7 @@ import os
 from aiogram import Bot, F, Router, exceptions, types
 from aiogram.filters import Command
 from dotenv import load_dotenv
+from yandexfreetranslate import YandexFreeTranslate
 
 
 # Load environment variables and initialize bot and router
@@ -14,14 +15,21 @@ load_dotenv()
 BOT_USERNAME = os.getenv("BOT_USERNAME")
 bot = Bot(token=os.getenv("TOKEN"))
 router = Router()
+yt = YandexFreeTranslate()
+yt = YandexFreeTranslate(api = "ios")
 
 
 @router.message(F.text, Command("start"))
 async def start_command_handler(message: types.Message) -> None:
     """Sends welcome text"""
-    await message.answer(
-        text="Send me a sticker to add to the sticker set. Send me that sticker <b>from the pack created by the bot</b> to remove it."
-    )
+    print(message.from_user.language_code)
+    if message.from_user.language_code == "en":
+        msg = "Send me a sticker to add to the sticker set. Send me that sticker <b>from the pack created by the bot</b> to remove it."
+    elif message.from_user.language_code == "ru":
+        msg = "Отправь мне стикер, чтобы добавить его в стикер пак. Отправь мне этот же стикер <b>с пака созданного ботом</b>, чтобы удалить его."
+    else:
+        msg = yt.translate("en", message.from_user.language_code, "Send me a sticker to add to the sticker set. Send me that sticker <b>from the pack created by the bot</b> to remove it.")
+    await message.answer(text=msg)
 
 
 @router.message(F.sticker)
